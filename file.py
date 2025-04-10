@@ -34,13 +34,47 @@ def add_task(description):
     # format for json
     new_task = {
         "id": new_id,
-        "description": description
+        "description": description,
+        "status": "pending"
     }
 
     # add task to the list of tasks and then save by dumping
     tasks.append(new_task)
     save_tasks(tasks)
     print(f"Task added successfully (ID: {new_id})")
+
+def mark_done(task_id):
+    tasks = load_tasks()
+    updated = False
+
+    for task in tasks:
+        if task["id"] == task_id:
+            task["status"] = "done"
+            updated = True
+            break
+    
+    if updated:
+        save_tasks(tasks)
+        print(f"Task (ID: {task_id}) marked as done successfully")
+    else:
+        print(f"No task found at (ID: {task_id})")
+
+
+def mark_in_progress(task_id):
+    tasks = load_tasks()
+    updated = False
+
+    for task in tasks:
+        if task["id"] == task_id:
+            task["status"] = "in progress"
+            updated = True
+            break
+    
+    if updated:
+        save_tasks(tasks)
+        print(f"Task (ID: {task_id}) marked as in progress successfully")
+    else:
+        print(f"No task found at (ID: {task_id})")
 
 
 def update_task(task_id, description):
@@ -107,6 +141,20 @@ def handle_command(command, arguments):
                 print("Invalid ID. Must be a number")
         else:
             print("nothing was deleted")
+    elif command == "mark-done":
+        if arguments:
+            try:
+                task_id = int(arguments[0])
+                mark_done(task_id)
+            except ValueError:
+                print("Invalid ID. Must be a number")
+    elif command == "mark-in-progress":
+        if arguments:
+            try:
+                task_id = int(arguments[0])
+                mark_in_progress(task_id)
+            except ValueError:
+                print("Invalid ID. Must be a number")
     else:
         print(f"Unknown command: {command}")
 
