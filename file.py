@@ -17,7 +17,7 @@ def save_tasks(tasks):
     with open("task.json", "w") as file:
         json.dump(tasks, file)
 
-def add_task(desc):
+def add_task(description):
     """Add a task to the json file using other created functions"""
     tasks = load_tasks()
 
@@ -39,6 +39,26 @@ def add_task(desc):
     save_tasks(tasks)
     print(f"Task added successfully (ID: {new_id})")
 
+def update_task(task_id, description):
+    """Update an existing task in the json file"""
+    tasks = load_tasks()
+    updated = False
+
+    # have to search through the list using a for loop since we didn't implement tasks as a dictionary
+    # searches list with for loop looking for the task id's description we want to update
+    for task in tasks:
+        if task["id"] == task_id:
+            task["description"] = description
+            updated = True
+            break
+    
+    if updated:
+        save_tasks(tasks)
+        print(f"Task (ID: {task_id}) updated successfully")
+    else:
+        print(f"No task found at (ID: {task_id})")
+
+
 def handle_command(command, arguments):
     """Handles commands that could be used (add, delete, update) and more"""
     if command == "add":
@@ -49,13 +69,18 @@ def handle_command(command, arguments):
             print("nothing was added; consider the correct format")
     elif command == "update":
         if arguments:
-            description = " ".join(arguments)
-            # implement update
+            try:
+                task_id = int(arguments[0])
+                description = " ".join(arguments[1:])
+                update_task(task_id, description)
+            except ValueError:
+                print("Invalid ID. Must be a number")
         else:
             print("task was not updated; see readme for instructions on how to update")
     elif command == "delete":
         if arguments:
-            description = " ".join(arguments)
+            task_id = int(arguments[0])
+            description = " ".join(arguments[1:])
             # implement delete
         else:
             print("nothing was deleted")
