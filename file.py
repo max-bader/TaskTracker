@@ -2,6 +2,7 @@ import sys
 import json
 import os
 
+
 def load_tasks():
     """If there are already tasks within the json file, load them or return an empty list"""
     if os.path.exists("task.json"):
@@ -12,10 +13,12 @@ def load_tasks():
                 return []
     return []
 
+
 def save_tasks(tasks):
     """Save the list of tasks to the json file"""
     with open("task.json", "w") as file:
         json.dump(tasks, file)
+
 
 def add_task(description):
     """Add a task to the json file using other created functions"""
@@ -31,13 +34,14 @@ def add_task(description):
     # format for json
     new_task = {
         "id": new_id,
-        "description": desc
+        "description": description
     }
 
     # add task to the list of tasks and then save by dumping
     tasks.append(new_task)
     save_tasks(tasks)
     print(f"Task added successfully (ID: {new_id})")
+
 
 def update_task(task_id, description):
     """Update an existing task in the json file"""
@@ -57,6 +61,23 @@ def update_task(task_id, description):
         print(f"Task (ID: {task_id}) updated successfully")
     else:
         print(f"No task found at (ID: {task_id})")
+
+
+def delete_task(task_id):
+    """Deletes a task from the json if the given task id exists"""
+    tasks = load_tasks()
+
+    # new list that doesn't have the deleted task
+    new_tasks = []
+    for task in tasks:
+        if task["id"] != task_id:
+            new_tasks.append(task)
+
+    if len(tasks) == len(new_tasks): # means nothing was deleted because they are same length
+        print(f"No task found with id: {task_id}")
+    else:
+        save_tasks(new_tasks)
+        print(f"Task (ID: {task_id}) deleted successfully")
 
 
 def handle_command(command, arguments):
@@ -79,13 +100,16 @@ def handle_command(command, arguments):
             print("task was not updated; see readme for instructions on how to update")
     elif command == "delete":
         if arguments:
-            task_id = int(arguments[0])
-            description = " ".join(arguments[1:])
-            # implement delete
+            try:
+                task_id = int(arguments[0])
+                delete_task(task_id)
+            except ValueError:
+                print("Invalid ID. Must be a number")
         else:
             print("nothing was deleted")
     else:
         print(f"Unknown command: {command}")
+
 
 def parse_command():
     """Parses the command line by using sys.argv. The first string should be 
@@ -98,9 +122,11 @@ def parse_command():
         print("no commands to parse")
         sys.exit(1)
 
+
 def main():
     command, arguments = parse_command()
     handle_command(command, arguments)
-    
+
+  
 if __name__ == "__main__":
     main()
