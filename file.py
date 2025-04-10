@@ -114,6 +114,17 @@ def delete_task(task_id):
         print(f"Task (ID: {task_id}) deleted successfully")
 
 
+def list_tasks():
+    tasks = load_tasks()
+
+    if not tasks:
+        print("no tasks in list")
+
+    print("Task List:")
+    for task in tasks:
+        print(f"ID: {task['id']} | {task['description']} [{task['status']}]")
+    print()
+
 def handle_command(command, arguments):
     """Handles commands that could be used (add, delete, update) and more"""
     if command == "add":
@@ -155,6 +166,8 @@ def handle_command(command, arguments):
                 mark_in_progress(task_id)
             except ValueError:
                 print("Invalid ID. Must be a number")
+    elif command == "list":
+        list_tasks()
     else:
         print(f"Unknown command: {command}")
 
